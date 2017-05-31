@@ -15,9 +15,9 @@
 }(this, function (Chartist) {
 
   /**
-   * Chartist.js plugin to display a data label on top of the points in a line chart.
-   *
-   */
+  * Chartist.js plugin to display a data label on top of the points in a line chart.
+  *
+  */
   /* global Chartist */
   (function (window, document, Chartist) {
     'use strict';
@@ -41,9 +41,10 @@
 
       return function tooltip(chart) {
         var tooltipSelector = options.pointClass;
-        if (chart instanceof Chartist.Bar) {
+        var $point;
+        if (chart.constructor.name == Chartist.Bar.prototype.constructor.name) {
           tooltipSelector = 'ct-bar';
-        } else if (chart instanceof Chartist.Pie) {
+        } else if (chart.constructor.name ==  Chartist.Pie.prototype.constructor.name) {
           // Added support for donut graph
           if (chart.options.donut) {
             tooltipSelector = 'ct-slice-donut';
@@ -71,12 +72,13 @@
         function on(event, selector, callback) {
           $chart.addEventListener(event, function (e) {
             if (!selector || hasClass(e.target, selector))
-              callback(e);
+            callback(e);
           });
         }
 
         on('mouseover', tooltipSelector, function (event) {
-          var $point = event.target;
+          $point = event.target;
+          $point.setAttribute('class', $point.getAttribute('class') ? $point.getAttribute('class') + ' active' : 'active');
           var tooltipText = '';
 
           var isPieChart = (chart instanceof Chartist.Pie) ? $point : $point.parentNode;
@@ -138,17 +140,17 @@
         });
 
         on('mouseout', tooltipSelector, function () {
-          hide($toolTip);
+          hide($toolTip, $point);
         });
 
         on('mousemove', null, function (event) {
           if (false === options.anchorToPoint)
-            setPosition(event);
+          setPosition(event);
         });
 
         function setPosition(event) {
-          height = height || $toolTip.offsetHeight;
-          width = width || $toolTip.offsetWidth;
+          height = $toolTip.offsetHeight;
+          width = $toolTip.offsetWidth;
           var offsetX = - width / 2 + options.tooltipOffset.x
           var offsetY = - height + options.tooltipOffset.y;
           var anchorX, anchorY;
@@ -179,9 +181,13 @@
       }
     }
 
-    function hide(element) {
+    function hide(element, point) {
       var regex = new RegExp('tooltip-show' + '\\s*', 'gi');
       element.className = element.className.replace(regex, '').trim();
+      if (point) {
+        var regexPoint = new RegExp('active' + '\\s*', 'gi');
+        point.setAttribute('class', point.getAttribute('class').replace(regexPoint, '').trim());
+      }
     }
 
     function hasClass(element, className) {

@@ -25,6 +25,7 @@
 
     return function tooltip(chart) {
       var tooltipSelector = options.pointClass;
+      var $point;
       if (chart.constructor.name == Chartist.Bar.prototype.constructor.name) {
         tooltipSelector = 'ct-bar';
       } else if (chart.constructor.name ==  Chartist.Pie.prototype.constructor.name) {
@@ -60,7 +61,8 @@
       }
 
       on('mouseover', tooltipSelector, function (event) {
-        var $point = event.target;
+        $point = event.target;
+        $point.setAttribute('class', $point.getAttribute('class') ? $point.getAttribute('class') + ' active' : 'active');
         var tooltipText = '';
 
         var isPieChart = (chart instanceof Chartist.Pie) ? $point : $point.parentNode;
@@ -122,7 +124,7 @@
       });
 
       on('mouseout', tooltipSelector, function () {
-        hide($toolTip);
+        hide($toolTip, $point);
       });
 
       on('mousemove', null, function (event) {
@@ -131,8 +133,8 @@
       });
 
       function setPosition(event) {
-        height = height || $toolTip.offsetHeight;
-        width = width || $toolTip.offsetWidth;
+        height = $toolTip.offsetHeight;
+        width = $toolTip.offsetWidth;
         var offsetX = - width / 2 + options.tooltipOffset.x
         var offsetY = - height + options.tooltipOffset.y;
         var anchorX, anchorY;
@@ -163,9 +165,13 @@
     }
   }
 
-  function hide(element) {
+  function hide(element, point) {
     var regex = new RegExp('tooltip-show' + '\\s*', 'gi');
     element.className = element.className.replace(regex, '').trim();
+    if (point) {
+      var regexPoint = new RegExp('active' + '\\s*', 'gi');
+      point.setAttribute('class', point.getAttribute('class').replace(regexPoint, '').trim());
+    }
   }
 
   function hasClass(element, className) {
