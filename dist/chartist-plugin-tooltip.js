@@ -42,16 +42,17 @@
       return function tooltip(chart) {
         var tooltipSelector = options.pointClass;
         var $point;
-        if (chart.constructor.name == Chartist.Bar.prototype.constructor.name) {
-          tooltipSelector = 'ct-bar';
-        } else if (chart.constructor.name ==  Chartist.Pie.prototype.constructor.name) {
-          // Added support for donut graph
-          if (chart.options.donut) {
-            tooltipSelector = 'ct-slice-donut';
-          } else {
-            tooltipSelector = 'ct-slice-pie';
-          }
-        }
+        // This dose not work if you minimize your code
+        // if (chart.constructor.name == Chartist.Bar.prototype.constructor.name) {
+        //   tooltipSelector = 'ct-bar';
+        // } else if (chart.constructor.name ==  Chartist.Pie.prototype.constructor.name) {
+        //   // Added support for donut graph
+        //   if (chart.options.donut) {
+        //     tooltipSelector = 'ct-slice-donut';
+        //   } else {
+        //     tooltipSelector = 'ct-slice-pie';
+        //   }
+        // }
 
         var $chart = chart.container;
         var $toolTip = $chart.querySelector('.chartist-tooltip');
